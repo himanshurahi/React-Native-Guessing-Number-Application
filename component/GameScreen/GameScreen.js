@@ -1,7 +1,17 @@
 import React from "react";
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Button,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import GameOver from "../GameOver/GameOver";
 import MyCard from "../MyCard/MyCard";
+import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 const RandomNumber = (max, min) => {
   return Math.floor(Math.random() * (max - min) + min);
@@ -14,6 +24,7 @@ function GameScreen(props) {
 
   const [gamefinished, setgamefinished] = React.useState(false);
   const [roundCounter, setroundCounter] = React.useState(0);
+  const [guessTrack, setguessTrack] = React.useState([]);
 
   React.useEffect(() => {
     if (props.userChoiceNumber == randomeNumber) {
@@ -43,6 +54,7 @@ function GameScreen(props) {
     // }
 
     setroundCounter(roundCounter + 1);
+    setguessTrack([...guessTrack, randomeNumber]);
     if (type == "lower") {
       TrackHighNumber.current = randomeNumber;
     }
@@ -72,15 +84,48 @@ function GameScreen(props) {
       <Text style={styles.g_number}>{randomeNumber}</Text>
       <MyCard>
         <View style={styles.button}>
-          <Button onPress={() => actionHandler("lower")} title="lower"></Button>
-          <Button
+          <AntDesign
+            onPress={() => actionHandler("lower")}
+            name="minus"
+            style={{ backgroundColor: "tomato", padding: 10, borderRadius: 10 }}
+            size={24}
+            color="white"
+          ></AntDesign>
+          {/* <Button onPress={() => actionHandler("lower")} title="lower"></Button> */}
+          {/* <Button onPress={() => actionHandler("greater")} title = "D">
+            
+          </Button> */}
+          <AntDesign
             onPress={() => actionHandler("greater")}
-            title="greater"
-          ></Button>
+            name="plus"
+            style={{ backgroundColor: "tomato", padding: 10, borderRadius: 10 }}
+            size={24}
+            color="white"
+          ></AntDesign>
         </View>
       </MyCard>
+
+      <ScrollView style={{ marginTop: 30 }}>
+        {guessTrack.map((value, index) => {
+          return (
+            <View
+              key={index}
+              style={styles.guess}
+              onStartShouldSetResponder={() => true}
+            >
+              <Text style={{ color: "white", fontSize: 20, padding: 10 }}>
+                {value}
+              </Text>
+            </View>
+          );
+        })}
+      </ScrollView>
     </View>
   );
+
+  //   return (
+  //     <GameOver roundCounter={1} userChoice={1} />
+  //   );
 }
 
 const styles = StyleSheet.create({
@@ -102,6 +147,12 @@ const styles = StyleSheet.create({
     padding: 5,
     width: 300,
     justifyContent: "space-between",
+  },
+  guess: {
+    backgroundColor: "tomato",
+    width: 250,
+    alignItems: "center",
+    marginVertical: 2,
   },
 });
 export default GameScreen;
